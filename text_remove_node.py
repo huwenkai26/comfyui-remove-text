@@ -28,7 +28,7 @@ class ImageRemoveTextNode:
 
     def remove_text(self, image):
         # Convert tensor to PIL Image
-        pil_image = to_pil_image(image)
+        pil_image = to_pil_image(image[0])
         # Get image information
         removeImg = textRemove(pil_image)
 
