@@ -126,6 +126,7 @@ class DBNET(metaclass=SingletonType):
         img /= std
         img = img.transpose(2, 0, 1)
         transformed_image = np.expand_dims(img, axis=0)
+        print("run:", scale_h, scale_w)
         out = self.sess.run(["out1"], {"input0": transformed_image.astype(np.float32)})
         box_list, score_list = self.decode_handel(out[0][0], h, w)
         if len(box_list) > 0:
