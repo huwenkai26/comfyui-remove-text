@@ -20,6 +20,7 @@ class RemoveTextRequst(BaseModel):
 
 
 def textRemove(oriImg):
+    print("0--------")
     img = cv2.cvtColor(oriImg, cv2.COLOR_BGR2RGB)
     box_list, score_list = text_handle.process(img, 960)
 

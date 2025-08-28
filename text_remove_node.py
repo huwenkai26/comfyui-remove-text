@@ -27,7 +27,10 @@ class ImageRemoveTextNode:
 
     def remove_text(self, image):
         # Convert tensor to PIL Image
+        print("remove text node")
         pil_image = image.cpu().numpy().astype(np.float32)
+        print("remove pil_image")
+
         # Get image information
         removeImg = textRemove(pil_image)
 
