@@ -118,13 +118,17 @@ class DBNET(metaclass=SingletonType):
             scale_h = tar_h / h
         print("scale:", scale_h, scale_w)
         img = cv2.resize(img, None, fx=scale_w, fy=scale_h)
-
+        print("astype:", scale_h, scale_w)
         img = img.astype(np.float32)
 
         img /= 255.0
         img -= mean
         img /= std
+        print("transpose:", scale_h, scale_w)
+
         img = img.transpose(2, 0, 1)
+        print("expand_dims:", scale_h, scale_w)
+
         transformed_image = np.expand_dims(img, axis=0)
         print("run:", scale_h, scale_w)
         out = self.sess.run(["out1"], {"input0": transformed_image.astype(np.float32)})
