@@ -4,7 +4,7 @@ import uuid
 import cv2
 import torch
 
-from decode import SegDetectorRepresenter
+from .decode import SegDetectorRepresenter
 from typing import Any, Dict, List, Literal, Optional, Union
 import os
 
