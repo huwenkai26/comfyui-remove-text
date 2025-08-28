@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, Field
 import requests
 import uvicorn, json
+import os
 
 mean = (0.485, 0.456, 0.406)
 std = (0.229, 0.224, 0.225)
@@ -131,5 +132,6 @@ class DBNET(metaclass=SingletonType):
         return box_list, score_list
 
 
-text_handle = DBNET(MODEL_PATH="../models/dbnet.onnx")
+model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models", "dbnet.onnx")
+text_handle = DBNET(MODEL_PATH=model_path)
 
