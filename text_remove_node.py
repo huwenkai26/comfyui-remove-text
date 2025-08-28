@@ -1,7 +1,6 @@
 import os
 from PIL import Image
 import numpy as np
-from torchvision.transforms.functional import to_pil_image, to_tensor
 
 from .dbnet.dbnet_infer import textRemove
 
@@ -28,7 +27,7 @@ class ImageRemoveTextNode:
 
     def remove_text(self, image):
         # Convert tensor to PIL Image
-        pil_image = to_pil_image(image[0])
+        pil_image = image.cpu().numpy().astype(np.float32)
         # Get image information
         removeImg = textRemove(pil_image)
 
