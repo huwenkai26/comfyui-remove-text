@@ -4,6 +4,7 @@ import uuid
 import cv2
 import torch
 
+from comfy import model_management
 from .decode import SegDetectorRepresenter
 from typing import Any, Dict, List, Literal, Optional, Union
 import os
@@ -13,11 +14,7 @@ std = (0.229, 0.224, 0.225)
 
 
 
-def textRemove(oriImg):
-    print("0--------")
-    img = cv2.cvtColor(oriImg, cv2.COLOR_BGR2RGB)
-    img = img.astype(np.float32)
-
+def textRemove(img):
     box_list, score_list = text_handle.process(img, 960)
 
     h, w, c = img.shape
@@ -48,13 +45,8 @@ def textRemove(oriImg):
         img_np = img_np.astype(np.float32) / 255.0
     else:
         img_np = img_np.astype(np.float32)
-
-    img_tensor = torch.from_numpy(img_np).unsqueeze(0)  # (1, H, W, C)
-    # resultUrl = upload_file_to_tos(input_file)
-    # images.append(resultUrl)
-    # if os.path.exists(input_file):
-    #     os.remove(input_file)
-    # print("0--------")
+    # img_tensor = torch.from_numpy(img_np).unsqueeze(0)  # (1, H, W, C)
+    img_tensor = torch.from_numpy(img_np).to(model_management.get_torch_device()).unsqueeze(0)
     return img_tensor
 
 
@@ -94,10 +86,7 @@ def draw_bbox(img_path, result, color=(255, 0, 0), thickness=2):
 class DBNET(metaclass=SingletonType):
     def __init__(self, MODEL_PATH):
         sess_opts = rt.SessionOptions()
-        sess_opts.inter_op_num_threads = 8  # 设置操作间并行线程数
-        sess_opts.intra_op_num_threads = 8  # 设置操作内部并行线程数
-
-        self.sess = rt.InferenceSession(MODEL_PATH, sess_opts)
+        self.sess = rt.InferenceSession(MODEL_PATH, sess_opts, providers= ['CPUExecutionProvider' ,'CPUExecutionProvider'])
 
         self.decode_handel = SegDetectorRepresenter()
 
@@ -147,13 +136,4 @@ class DBNET(metaclass=SingletonType):
 model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models", "dbnet.onnx")
 text_handle = DBNET(MODEL_PATH=model_path)
 
-# 测试textRemove
-if __name__ == "__main__":
-    import time
 
-    img_path = "img_1.png"
-    img = cv2.imread(img_path)
-    start = time.time()
-    images = textRemove(img)
-    end = time.time()
-    print("time:", end - start)

@@ -1,6 +1,9 @@
 import os
+
+import cv2
 from PIL import Image
 import numpy as np
+from torchvision.transforms.functional import to_pil_image
 
 from .dbnet.dbnet_infer import textRemove
 
@@ -30,9 +33,15 @@ class ImageRemoveTextNode:
         print("remove text node")
         pil_image = image.cpu().numpy().astype(np.float32)
         print("remove pil_image")
-
         # Get image information
-        removeImg = textRemove(pil_image)
+        if len(image) > 1:
+            raise Exception(f'Only images with batch_size==1 are supported! batch_size={len(image)}')
+        nparray = (image[0].cpu().numpy()[..., ::-1] * 255).astype(np.uint8)  # reverse color channel from RGB to BGR
+        # Convert tensor to PIL Image
+
+        # Convert PIL Image to NumPy array for OpenCV processing
+        img = cv2.cvtColor(nparray, cv2.COLOR_RGB2BGR)
+        removeImg = textRemove(img)
 
         return (removeImg,)  # Return value must be a tuple
 
