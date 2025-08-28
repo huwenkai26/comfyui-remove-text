@@ -116,7 +116,7 @@ class DBNET(metaclass=SingletonType):
             tar_h = tar_h - tar_h % 32
             tar_h = max(32, tar_h)
             scale_h = tar_h / h
-
+        print("scale:", scale_h, scale_w)
         img = cv2.resize(img, None, fx=scale_w, fy=scale_h)
 
         img = img.astype(np.float32)
