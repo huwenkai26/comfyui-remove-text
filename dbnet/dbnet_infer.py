@@ -2,7 +2,7 @@ import onnxruntime as rt
 import numpy as np
 import uuid
 import cv2
-from decode import SegDetectorRepresenter
+from .decode import SegDetectorRepresenter
 from fastapi import FastAPI, Request
 from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, Field
