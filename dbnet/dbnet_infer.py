@@ -2,21 +2,13 @@ import onnxruntime as rt
 import numpy as np
 import uuid
 import cv2
-from .decode import SegDetectorRepresenter
-from fastapi import FastAPI, Request
+from decode import SegDetectorRepresenter
 from typing import Any, Dict, List, Literal, Optional, Union
-from pydantic import BaseModel, Field
-import requests
-import uvicorn, json
 import os
 
 mean = (0.485, 0.456, 0.406)
 std = (0.229, 0.224, 0.225)
-app = FastAPI()
 
-
-class RemoveTextRequst(BaseModel):
-    originImages: List[str]
 
 
 def textRemove(oriImg):
@@ -48,13 +40,13 @@ def textRemove(oriImg):
         # "Content-Fill" using mask (INPAINT_NS vs INPAINT_TELEA)
         img_inpaint = cv2.inpaint(img_inpaint, mask, 3, cv2.INPAINT_TELEA)
     input_file = str(uuid.uuid4()) + '.jpg'
-    cv2.imwrite(input_file, img_inpaint)
+    cv2.imwrite(input_file, cv2.cvtColor(img_inpaint, cv2.COLOR_RGB2BGR))
     # resultUrl = upload_file_to_tos(input_file)
     # images.append(resultUrl)
     # if os.path.exists(input_file):
     #     os.remove(input_file)
     # print("0--------")
-    return images
+    return img_inpaint
 
 
 def Singleton(cls):
@@ -140,3 +132,13 @@ class DBNET(metaclass=SingletonType):
 model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models", "dbnet.onnx")
 text_handle = DBNET(MODEL_PATH=model_path)
 
+# 测试textRemove
+if __name__ == "__main__":
+    import time
+
+    img_path = "img_1.png"
+    img = cv2.imread(img_path)
+    start = time.time()
+    images = textRemove(img)
+    end = time.time()
+    print("time:", end - start)
