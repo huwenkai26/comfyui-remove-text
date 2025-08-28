@@ -2,6 +2,8 @@ import onnxruntime as rt
 import numpy as np
 import uuid
 import cv2
+import torch
+
 from decode import SegDetectorRepresenter
 from typing import Any, Dict, List, Literal, Optional, Union
 import os
@@ -39,14 +41,19 @@ def textRemove(oriImg):
 
         # "Content-Fill" using mask (INPAINT_NS vs INPAINT_TELEA)
         img_inpaint = cv2.inpaint(img_inpaint, mask, 3, cv2.INPAINT_TELEA)
-    input_file = str(uuid.uuid4()) + '.jpg'
-    cv2.imwrite(input_file, cv2.cvtColor(img_inpaint, cv2.COLOR_RGB2BGR))
+    img_np = img_inpaint
+    if img_np.dtype == np.uint8:
+        img_np = img_np.astype(np.float32) / 255.0
+    else:
+        img_np = img_np.astype(np.float32)
+
+    img_tensor = torch.from_numpy(img_np).unsqueeze(0)  # (1, H, W, C)
     # resultUrl = upload_file_to_tos(input_file)
     # images.append(resultUrl)
     # if os.path.exists(input_file):
     #     os.remove(input_file)
     # print("0--------")
-    return img_inpaint
+    return img_tensor
 
 
 def Singleton(cls):
@@ -133,12 +140,12 @@ model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models", 
 text_handle = DBNET(MODEL_PATH=model_path)
 
 # 测试textRemove
-if __name__ == "__main__":
-    import time
-
-    img_path = "img_1.png"
-    img = cv2.imread(img_path)
-    start = time.time()
-    images = textRemove(img)
-    end = time.time()
-    print("time:", end - start)
+# if __name__ == "__main__":
+#     import time
+#
+#     img_path = "img_1.png"
+#     img = cv2.imread(img_path)
+#     start = time.time()
+#     images = textRemove(img)
+#     end = time.time()
+#     print("time:", end - start)
