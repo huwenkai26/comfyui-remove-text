@@ -92,7 +92,11 @@ def draw_bbox(img_path, result, color=(255, 0, 0), thickness=2):
 
 class DBNET(metaclass=SingletonType):
     def __init__(self, MODEL_PATH):
-        self.sess = rt.InferenceSession(MODEL_PATH)
+        sess_opts = rt.SessionOptions()
+        sess_opts.inter_op_num_threads = 8  # 设置操作间并行线程数
+        sess_opts.intra_op_num_threads = 8  # 设置操作内部并行线程数
+
+        self.sess = rt.InferenceSession(MODEL_PATH, sess_opts)
 
         self.decode_handel = SegDetectorRepresenter()
 
