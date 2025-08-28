@@ -3,8 +3,7 @@ from PIL import Image
 import numpy as np
 from torchvision.transforms.functional import to_pil_image, to_tensor
 
-from dbnet.dbnet_infer import textRemove
-
+from .dbnet.dbnet_infer import textRemove
 
 class ImageRemoveTextNode:
     """
