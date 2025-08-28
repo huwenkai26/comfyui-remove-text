@@ -16,6 +16,8 @@ std = (0.229, 0.224, 0.225)
 def textRemove(oriImg):
     print("0--------")
     img = cv2.cvtColor(oriImg, cv2.COLOR_BGR2RGB)
+    img = img.astype(np.float32)
+
     box_list, score_list = text_handle.process(img, 960)
 
     h, w, c = img.shape
@@ -138,6 +140,7 @@ class DBNET(metaclass=SingletonType):
             box_list, score_list = box_list[idx], score_list[idx]
         else:
             box_list, score_list = [], []
+        print("box_list:", scale_h, scale_w)    
         return box_list, score_list
 
 
@@ -145,12 +148,12 @@ model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models", 
 text_handle = DBNET(MODEL_PATH=model_path)
 
 # 测试textRemove
-# if __name__ == "__main__":
-#     import time
-#
-#     img_path = "img_1.png"
-#     img = cv2.imread(img_path)
-#     start = time.time()
-#     images = textRemove(img)
-#     end = time.time()
-#     print("time:", end - start)
+if __name__ == "__main__":
+    import time
+
+    img_path = "img_1.png"
+    img = cv2.imread(img_path)
+    start = time.time()
+    images = textRemove(img)
+    end = time.time()
+    print("time:", end - start)
